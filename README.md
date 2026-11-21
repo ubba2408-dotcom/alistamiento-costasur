@@ -1,4 +1,9 @@
-# App web Alistamiento y Anticorrosivo — Puesta en marcha
+# App web Alistamiento y Anticorrosivo
+
+**App:** https://ubba2408-dotcom.github.io/alistamiento-costasur/  
+**Registro Entra ID:** Alistamiento Costa Sur Web · Id. de cliente `4bbf6529-109e-4f15-bf40-a5f206613444` · permisos delegados `User.Read` y `Sites.ReadWrite.All` (no requiere consentimiento de administrador).
+
+## Puesta en marcha
 
 Aplicación de una sola página (`index.html`) que usa **listas de SharePoint** del sitio **POSVENTACSACOSTASUR** como base de datos y se publica gratis en **GitHub Pages**. Si `CLIENT_ID` está vacío, abre en **modo demostración** con datos de ejemplo.
 
