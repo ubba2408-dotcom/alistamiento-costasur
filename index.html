@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alistamiento · Costa Sur</title>
+<meta name="theme-color" content="#0B1F3A">
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<style>
+:root{
+  --navy:#0B1F3A; --bg:#F3F5F8; --line:#E2E8F0; --ink:#111827; --ink2:#374151; --muted:#6B7280;
+  --blue:#1565C0; --blue-d:#0D47A1; --blue-l:#E8F0FE; --teal:#0D9488; --teal-d:#0F766E; --teal-l:#CCFBF1;
+  --amber:#F59E0B; --amber-l:#FEF3C7; --amber-d:#B45309; --green:#16A34A; --green-l:#DCFCE7; --green-d:#15803D;
+  --sky-l:#DBEAFE; --sky-d:#1D4ED8; --violet:#6D28D9; --violet-l:#EDE9FE;
+  --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:15px}
+button,input,select,textarea{font:inherit}
+header{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hdr{display:flex;align-items:center;gap:12px;padding:14px 18px 8px;max-width:1240px;margin:0 auto}
+.hdr h1{font-size:19px;margin:0;font-weight:700}
+.hdr small{display:block;color:#BFDBFE;font-size:12px;font-weight:400}
+.hdr .sp{flex:1}
+.user{font-size:12px;color:#BFDBFE;text-align:right;line-height:1.35}
+.user button{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:8px;padding:3px 10px;cursor:pointer;margin-top:3px;font-size:12px}
+nav{display:flex;gap:2px;padding:0 10px;max-width:1240px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+nav button{background:transparent;border:0;color:#CBD5E1;padding:10px 13px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;font-weight:600}
+nav button.on{color:#fff;border-bottom-color:#60A5FA}
+main{max-width:1240px;margin:0 auto;padding:16px 12px 110px}
+.demo{background:var(--amber-l);color:var(--amber-d);border:1px solid #FCD34D;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.card h2{font-size:16px;margin:0 0 4px}
+.sub{margin:0 0 12px;color:var(--muted);font-size:13px}
+.sec{font-size:13px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.5px;margin:18px 2px 8px;display:flex;align-items:center;gap:8px}
+.sec .n{background:#E5E7EB;border-radius:999px;padding:1px 9px;font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:6px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border-top:5px solid var(--c)}
+.kpi b{display:block;font-size:26px;color:var(--c);line-height:1.15}
+.kpi span{color:var(--ink2);font-size:12px}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:170px}
+.btn{border:0;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn.p{background:var(--blue);color:#fff}.btn.p:hover{background:var(--blue-d)}
+.btn.t{background:var(--teal);color:#fff}.btn.t:hover{background:var(--teal-d)}
+.btn.g{background:var(--green);color:#fff}.btn.g:hover{background:var(--green-d)}
+.btn.o{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}.btn.o:hover{background:var(--blue-l)}
+.btn.q{background:#fff;color:var(--ink2);border:1px solid #CBD5E1}.btn.q:hover{background:#F1F5F9}
+.btn.w{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)}
+.btn:disabled{background:#CBD5E1!important;color:#fff!important;border-color:#CBD5E1!important;cursor:not-allowed}
+.btn.sm{padding:7px 12px;font-size:13px}
+input[type=text],input[type=date],input[type=search],select,textarea{width:100%;padding:10px 12px;border:1px solid #CBD5E1;border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid #93C5FD;border-color:var(--blue)}
+label.f{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.grid .full{grid-column:1/-1}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-left:6px solid var(--c,#CBD5E1);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+.item.sel{background:var(--blue-l);border-color:var(--blue);border-left-color:var(--blue)}
+.item.click{cursor:pointer}
+.item .main{flex:1;min-width:0}
+.item .t{font-weight:700;font-size:15px}
+.item .s{color:var(--ink2);font-size:13px;margin-top:2px}
+.item .m{color:var(--muted);font-size:12px;margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chk{width:30px;height:30px;border-radius:50%;border:2px solid #94A3B8;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.item.sel .chk{background:var(--blue);border-color:var(--blue)}
+.chip{display:inline-block;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;letter-spacing:.2px;white-space:nowrap}
+.c-esp{background:var(--amber-l);color:var(--amber-d)} .c-ac{background:var(--sky-l);color:var(--sky-d)}
+.c-al{background:var(--teal-l);color:var(--teal-d)} .c-ok{background:var(--green-l);color:var(--green-d)}
+.c-gray{background:#E5E7EB;color:#374151} .c-vi{background:var(--violet-l);color:var(--violet)}
+.acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.puestos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0}
+.pst{border:0;border-radius:18px;color:#fff;font-size:24px;font-weight:800;padding:40px 10px;cursor:pointer;box-shadow:var(--shadow);line-height:1.2}
+.pst small{display:block;font-size:13px;font-weight:600;opacity:.92;margin-top:8px}
+@media (max-width:700px){.puestos{grid-template-columns:1fr}.pst{padding:28px 10px}}
+.sticky{position:sticky;bottom:0;z-index:10;background:linear-gradient(transparent,var(--bg) 25%);padding-top:18px}
+.bar{background:var(--navy);color:#fff;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 6px 20px rgba(11,31,58,.25)}
+.bar label{font-size:13px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.bar input[type=date]{width:auto;padding:7px 10px}
+.bar input[type=checkbox]{width:18px;height:18px}
+.empty{text-align:center;color:var(--muted);padding:24px 10px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:92vw;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}.toast.ok{background:var(--green-d)}.toast.warn{background:var(--amber-d)}
+.upd{font-size:12px;color:var(--muted);text-align:right;margin:2px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#F8FAFC;color:var(--ink2);position:sticky;top:0}
+.tbl{overflow:auto;max-height:65vh;border:1px solid var(--line);border-radius:10px}
+.note{font-size:12px;color:var(--muted)}
+.login{max-width:420px;margin:60px auto;text-align:center}
+@media (max-width:600px){.item{flex-wrap:wrap}.item .acts{flex-direction:row;width:100%;justify-content:space-between;align-items:center}.item .acts .btn{flex:1;max-width:60%}.chip{white-space:normal}.hdr h1{font-size:17px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <div><h1>Alistamiento y Anticorrosivo</h1><small>Red Nissan · Cartagena TC · Zona Costa Sur</small></div>
+    <div class="sp"></div><div class="user" id="user"></div>
+  </div>
+  <nav id="nav"></nav>
+</header>
+<main id="app"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CONFIGURACIÓN =====================
+   CLIENT_ID vacío = MODO DEMOSTRACIÓN (datos de ejemplo).
+   ========================================================= */
+const CONFIG = {
+  TENANT_ID: "bfb53646-d4ba-4509-aabe-3c0ab4d79291",
+  CLIENT_ID: "",
+  SITE_HOST: "dinissancomco.sharepoint.com",
+  SITE_PATH: "/sites/POSVENTACSACOSTASUR",
+  LIST_VEH: "VehiculosControl",
+  LIST_TRAZA: "TrazabilidadProceso",
+  // Jefatura y administrativa (Harold, Laura Buelvas, Ubaldo): tablero, registro de vehículos y envío a proceso
+  JEFES: ["hemartinez2@dinissan.com.co", "lvbuelvas@dinissan.com.co", "umsaenz@dinissan.com.co"],
+  // Solo estas personas ven la trazabilidad (Ubaldo y Harold)
+  TRAZA: ["umsaenz@dinissan.com.co", "hemartinez2@dinissan.com.co"],
+  // Puestos de trabajo. tipo AC = cabina de anticorrosivo, AL = técnico alistador
+  PUESTOS: [
+    {id:"Cabina 1", tipo:"AC", color:"var(--blue)"},
+    {id:"Cabina 2", tipo:"AC", color:"#2563EB"},
+    {id:"Alistador", tipo:"AL", color:"var(--teal)"}
+  ],
+  REFRESCO_SEG: 30
+};
+
+const CAMPOS = [
+  {k:"Title", l:"Inventario", req:true}, {k:"Linea", l:"Línea", req:true}, {k:"Color", l:"Color", req:true},
+  {k:"Cliente", l:"Cliente"}, {k:"Asesor", l:"Asesor"}, {k:"Pedido", l:"Pedido"},
+  {k:"Estado", l:"Estado", opts:["PROGRAMADO","EN ALISTAMIENTO","ENTREGADO"]},
+  {k:"Prioridad", l:"Prioridad", opts:["ALTA","MEDIA","BAJA"]},
+  {k:"EstadoPlazo", l:"Estado plazo", opts:["A TIEMPO","EN RIESGO","VENCIDO","ENTREGADO"]},
+  {k:"Alistamiento", l:"Tipo de alistamiento", opts:["Básico","Con Accesorios"]},
+  {k:"FechaProg", l:"Fecha prog.", date:true}, {k:"FechaAperturaOT", l:"Fecha apertura OT", date:true},
+  {k:"FechaPromesa", l:"Fecha promesa", date:true}, {k:"FechaRealEntrega", l:"Fecha real entrega", date:true},
+  {k:"Facturacion", l:"Facturación", opts:["Sí","No"]}, {k:"Matricula", l:"Matrícula", opts:["Sí","No"]},
+  {k:"Calidad", l:"Calidad", opts:["Sí","No"]}, {k:"Despacho", l:"Despacho", opts:["Sí","No"]},
+  {k:"Accesorios", l:"Accesorios", area:true, max:255},
+  {k:"Observaciones", l:"Observaciones", area:true}, {k:"ObsRepuestos", l:"Observaciones área repuestos", area:true}
+];
+const ETAPA = {AC:{n:"Anticorrosivo", est:"AC_Estado", ini:"AC_Inicio", fin:"AC_Fin", prog:"AC_Programado", resp:"AC_Cabina"},
+               AL:{n:"Alistamiento",  est:"AL_Estado", ini:"AL_Inicio", fin:"AL_Fin", prog:"AL_Programado", resp:"AL_Tecnico"}};
+
+const DEMO = !CONFIG.CLIENT_ID;
+const S = {user:"", email:"", esJefe:false, verTraza:false, veh:[], traza:[], trazaOk:false, tab:"tablero", sel:new Set(),
+  puesto: localStorage.getItem("puesto") || "", busca:"", verEntregados:false, fecha:"", envAC:true, envAL:true,
+  edit:null, upd:null, busy:false, tf:"activos"};
+
+/* ===================== utilidades ===================== */
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const TZ = {timeZone:"America/Bogota"};
+const fF = v => v ? new Date(v).toLocaleDateString("es-CO",{...TZ,day:"2-digit",month:"2-digit",year:"numeric"}) : "";
+const fH = v => v ? new Date(v).toLocaleString("es-CO",{...TZ,day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) : "";
+const dIso = d => d ? d + "T12:00:00Z" : null;
+const toInput = v => v ? new Date(v).toLocaleDateString("en-CA",TZ) : "";
+const hoy = () => new Date().toLocaleDateString("en-CA",TZ);
+const esHoy = v => v && toInput(v) === hoy();
+const mins = (a,b) => a && b ? Math.max(0, Math.round((new Date(b)-new Date(a))/60000)) : null;
+const dur = m => m == null ? "" : m < 60 ? `${m} min` : `${Math.floor(m/60)} h ${String(m%60).padStart(2,"0")} min`;
+function toast(msg, t="") { const e=$("#toast"); e.textContent=msg; e.className="toast on "+t; clearTimeout(e._h); e._h=setTimeout(()=>e.className="toast",3500); }
+const st = (v,k) => v[ETAPA[k].est] || "";            // "", "Pendiente", "En proceso", "Completado"
+const activo = v => String(v.Estado||"").toUpperCase() !== "ENTREGADO";
+const enProceso = v => st(v,"AC")==="En proceso" || st(v,"AL")==="En proceso";
+
+/* Estado general del vehículo para el tablero */
+function estado(v) {
+  if (st(v,"AC")==="En proceso") return {g:"ac", t:"En cabina de anticorrosivo · " + (v.AC_Cabina||""), c:"var(--blue)", cl:"c-ac"};
+  if (st(v,"AL")==="En proceso") return {g:"al", t:"En alistamiento · " + (v.AL_Tecnico||""), c:"var(--teal)", cl:"c-al"};
+  const pend = ["AC","AL"].filter(k => st(v,k)==="Pendiente").map(k => ETAPA[k].n.toLowerCase());
+  const hechos = ["AC","AL"].filter(k => st(v,k)==="Completado").map(k => ETAPA[k].n + " listo");
+  if (pend.length) return {g:"esp", t:(hechos.length ? hechos.join(" · ") + " · " : "") + "Espera " + pend.join(" y "), c:"var(--amber)", cl:"c-esp"};
+  if (hechos.length) return {g:"ok", t:"Proceso completo", c:"var(--green)", cl:"c-ok"};
+  return {g:"none", t:"Sin enviar a proceso", c:"#CBD5E1", cl:"c-gray"};
+}
+function chipsEtapas(v) {
+  return ["AC","AL"].map(k => { const e = st(v,k), E = ETAPA[k]; if (!e) return "";
+    const cls = e==="Completado" ? "c-ok" : e==="En proceso" ? (k==="AC"?"c-ac":"c-al") : "c-esp";
+    const det = e==="Completado" ? " · " + dur(mins(v[E.ini], v[E.fin])) : e==="En proceso" ? " · " + (v[E.resp]||"") + " desde " + fH(v[E.ini]) : "";
+    return `<span class="chip ${cls}">${E.n.toUpperCase()}: ${e.toUpperCase()}${esc(det)}</span>`; }).join("");
+}
+
+/* ===================== datos: Graph / demo ===================== */
+let msalApp, siteId; const lids = {};
+const SCOPES = ["User.Read","Sites.ReadWrite.All"];
+async function token() { const acc = msalApp.getAllAccounts()[0];
+  try { return (await msalApp.acquireTokenSilent({scopes:SCOPES, account:acc})).accessToken; }
+  catch(e) { await msalApp.acquireTokenRedirect({scopes:SCOPES, account:acc}); } }
+async function graph(path, opt={}) {
+  const r = await fetch("https://graph.microsoft.com/v1.0" + path, {...opt, headers:{Authorization:"Bearer " + await token(), "Content-Type":"application/json", ...(opt.headers||{})}});
+  if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0,200));
+  return r.status === 204 ? null : r.json();
+}
+async function lid(n) { if (lids[n]) return lids[n];
+  const r = await graph(`/sites/${siteId}/lists?$filter=displayName eq '${n}'&$select=id`);
+  if (!r.value.length) throw new Error(`No existe la lista "${n}"`); return lids[n] = r.value[0].id; }
+async function leer(n) { let u = `/sites/${siteId}/lists/${await lid(n)}/items?$expand=fields&$top=999`, out = [];
+  while (u) { const r = await graph(u); out.push(...r.value.map(i => ({...i.fields, id:i.id}))); u = r["@odata.nextLink"]?.replace("https://graph.microsoft.com/v1.0",""); }
+  return out; }
+const lista = n => n === CONFIG.LIST_VEH ? S.veh : S.traza;
+let demoN = 1000;
+async function crear(n, f) { if (DEMO) { const r = {...f, id:String(++demoN), Created:new Date().toISOString()}; lista(n).push(r); return r; }
+  const r = await graph(`/sites/${siteId}/lists/${await lid(n)}/items`, {method:"POST", body:JSON.stringify({fields:f})}); return {...r.fields, id:r.id}; }
+async function actualizar(n, id, f) { if (DEMO) return Object.assign(lista(n).find(x => x.id == id), f);
+  return graph(`/sites/${siteId}/lists/${await lid(n)}/items/${id}/fields`, {method:"PATCH", body:JSON.stringify(f)}); }
+async function leerUno(id) { if (DEMO) return S.veh.find(x => x.id == id);
+  const r = await graph(`/sites/${siteId}/lists/${await lid(CONFIG.LIST_VEH)}/items/${id}?$expand=fields`); return {...r.fields, id:r.id}; }
+
+async function cargar(silencioso=false) {
+  try { if (!DEMO) { S.veh = await leer(CONFIG.LIST_VEH); if (S.trazaOk) S.traza = await leer(CONFIG.LIST_TRAZA); }
+        S.upd = new Date(); render(); }
+  catch(e) { if (!silencioso) toast("Error al cargar datos: " + e.message, "warn"); console.error(e); }
+}
+async function cargarTraza() { if (!DEMO) { try { S.traza = await leer(CONFIG.LIST_TRAZA); } catch(e) { toast("Error trazabilidad: " + e.message, "warn"); } } S.trazaOk = true; render(); }
+
+/* Registro de trazabilidad (un evento por acción) */
+async function evento(v, etapa, accion, responsable, duracion=null, detalle="") {
+  try { await crear(CONFIG.LIST_TRAZA, {Title:String(v.Title), Etapa:etapa, Accion:accion, Responsable:responsable||"", Usuario:S.email,
+          FechaHora:new Date().toISOString(), DuracionMin:duracion, Linea:v.Linea||"", Color:v.Color||"", VehiculoId:String(v.id), Detalle:detalle}); }
+  catch(e) { console.error("traza", e); toast("Aviso: no se pudo registrar la trazabilidad (" + e.message + ")", "warn"); }
+}
+
+/* ===================== modo demostración ===================== */
+function demoDatos() {
+  const h = n => new Date(Date.now() - n*36e5).toISOString();
+  const b = [["355668","Kicks P16","AZUL COBALTO","ALTA","Con Accesorios"],["354020","Kicks P16","GRIS","MEDIA","Básico"],["352493","Kicks P15","AZUL CLARO","MEDIA","Básico"],
+             ["358167","Frontier","BLANCO","ALTA","Con Accesorios"],["343289","Pathfinder","GRIS","BAJA","Básico"],["354456","Frontier","GRIS OSCURO","MEDIA","Con Accesorios"],
+             ["356012","Qashqai","GRIS","BAJA","Básico"],["351777","Versa","ROJO","MEDIA","Básico"]];
+  S.veh = b.map((x,i) => ({id:String(i+1), Title:x[0], Linea:x[1], Color:x[2], Prioridad:x[3], Alistamiento:x[4], Estado:"PROGRAMADO", Cliente:"Cliente " + (i+1), Asesor:"Asesor demo", FechaPromesa:dIso(hoy())}));
+  Object.assign(S.veh[0], {Estado:"EN ALISTAMIENTO", AC_Estado:"En proceso", AC_Cabina:"Cabina 1", AC_Inicio:h(1), AL_Estado:"Pendiente"});
+  Object.assign(S.veh[1], {Estado:"EN ALISTAMIENTO", AL_Estado:"En proceso", AL_Tecnico:"Alistador", AL_Inicio:h(2), AC_Estado:"Pendiente"});
+  Object.assign(S.veh[2], {Estado:"EN ALISTAMIENTO", AC_Estado:"Completado", AC_Cabina:"Cabina 2", AC_Inicio:h(5), AC_Fin:h(3.5), AL_Estado:"Pendiente"});
+  Object.assign(S.veh[3], {Estado:"EN ALISTAMIENTO", AC_Estado:"Completado", AC_Cabina:"Cabina 1", AC_Inicio:h(8), AC_Fin:h(6.6), AL_Estado:"Completado", AL_Tecnico:"Alistador", AL_Inicio:h(6), AL_Fin:h(3)});
+  Object.assign(S.veh[4], {Estado:"EN ALISTAMIENTO", AC_Estado:"Pendiente"});
+  S.traza = [];
+}
+
+/* ===================== render ===================== */
+const TABS = () => [...(S.esJefe ? [["tablero","Tablero"],["proceso","Enviar a proceso"],["vehiculos","Vehículos"]] : []), ...(S.verTraza ? [["traza","Trazabilidad"]] : []), ["puesto","Mi puesto"]];
+function render() {
+  $("#nav").innerHTML = TABS().map(([k,l]) => `<button class="${S.tab===k?"on":""}" onclick="ir('${k}')">${l}</button>`).join("");
+  $("#user").innerHTML = S.user ? `${esc(S.user)}<br>${S.esJefe ? "Jefatura / administración" : "Operación"}${DEMO ? "" : ` <button onclick="msalApp.logoutRedirect()">Salir</button>`}` : "";
+  if (!TABS().some(t => t[0] === S.tab)) S.tab = "puesto";
+  const v = {tablero:vTablero, proceso:vProceso, vehiculos:vVehiculos, traza:vTraza, puesto:vPuesto}[S.tab] || vPuesto;
+  $("#app").innerHTML = (DEMO ? `<div class="demo"><b>Modo demostración:</b> datos de ejemplo, no se guarda nada en SharePoint. Configure CLIENT_ID para conectar (ver SETUP.md).</div>` : "") + v();
+}
+function ir(t) { S.tab = t; S.sel.clear(); S.edit = null; S.busca = ""; if (t === "traza" && !S.trazaOk) cargarTraza(); render(); scrollTo(0,0); }
+const upd = () => S.upd ? `<div class="upd">Actualizado ${S.upd.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"})} · se actualiza solo cada ${CONFIG.REFRESCO_SEG} s</div>` : "";
+const buscar = (ph, fn) => `<input type="search" placeholder="${ph}" value="${esc(S.busca)}" oninput="S.busca=this.value;${fn}">`;
+const coincide = v => { const q = S.busca.toLowerCase(); return !q || [v.Title,v.Linea,v.Color,v.Cliente,v.Asesor,v.Pedido].join(" ").toLowerCase().includes(q); };
+function tarjeta(v, extra="", cls="", attrs="") { const e = estado(v);
+  return `<div class="item ${cls}" style="--c:${e.c}" ${attrs}><div class="main">
+    <div class="t">Inv. ${esc(v.Title)} · ${esc(v.Linea)}</div>
+    <div class="s">${esc(v.Color)}${v.Cliente ? " · " + esc(v.Cliente) : ""}${v.Alistamiento ? " · " + esc(v.Alistamiento) : ""}</div>
+    <div class="m"><span class="chip ${e.cl}">${esc(e.t.toUpperCase())}</span>${chipsEtapas(v)}${v.Prioridad ? `<span class="chip c-vi">PRIORIDAD ${esc(v.Prioridad)}</span>` : ""}</div>
+  </div>${extra}</div>`; }
+
+/* ---------- Tablero ---------- */
+function promedio(k) { const E = ETAPA[k], lim = Date.now() - 30*864e5;
+  const m = S.veh.filter(v => st(v,k)==="Completado" && new Date(v[E.fin]) >= lim).map(v => mins(v[E.ini], v[E.fin])).filter(x => x != null);
+  return m.length ? dur(Math.round(m.reduce((a,b)=>a+b,0)/m.length)) : "—"; }
+function vTablero() {
+  const act = S.veh.filter(v => estado(v).g !== "none" || activo(v));
+  const g = x => act.filter(v => estado(v).g === x);
+  const hoyFin = S.veh.filter(v => ["AC","AL"].some(k => st(v,k)==="Completado" && esHoy(v[ETAPA[k].fin]))).length;
+  const k = [["En cabina anticorrosivo", g("ac").length, "var(--blue)"], ["En alistamiento", g("al").length, "var(--teal)"],
+             ["En espera", g("esp").length, "var(--amber)"], ["Etapas terminadas hoy", hoyFin, "var(--green)"],
+             ["Prom. anticorrosivo (30 d)", promedio("AC"), "var(--sky-d)"], ["Prom. alistamiento (30 d)", promedio("AL"), "var(--teal-d)"]];
+  const lim = Date.now() - 7*864e5;
+  const ok = g("ok").filter(v => ["AC","AL"].some(x => new Date(v[ETAPA[x].fin]||0) >= lim));
+  const sec = (t, arr, vacio) => `<div class="sec">${t} <span class="n">${arr.length}</span></div><div class="list">${arr.length ? arr.map(v => tarjeta(v)).join("") : `<div class="empty">${vacio}</div>`}</div>`;
+  const porPuesto = CONFIG.PUESTOS.map(p => { const v = S.veh.find(x => (p.tipo==="AC" ? st(x,"AC")==="En proceso" && x.AC_Cabina===p.id : st(x,"AL")==="En proceso" && x.AL_Tecnico===p.id));
+    return `<div class="item" style="--c:${p.color}"><div class="main"><div class="t">${esc(p.id)} <span class="note">· ${p.tipo==="AC"?"Cabina de anticorrosivo":"Técnico alistador"}</span></div>
+      <div class="s">${v ? `Inv. ${esc(v.Title)} · ${esc(v.Linea)} · ${esc(v.Color)} · desde ${fH(v[ETAPA[p.tipo].ini])}` : "Disponible"}</div></div>
+      <span class="chip ${v ? (p.tipo==="AC"?"c-ac":"c-al") : "c-gray"}">${v ? "OCUPADO" : "LIBRE"}</span></div>`; }).join("");
+  return `<div class="kpis">${k.map(([t,v,c]) => `<div class="kpi" style="--c:${c}"><b>${v}</b><span>${t}</span></div>`).join("")}</div>${upd()}
+  <div class="sec">Puestos de trabajo</div><div class="list">${porPuesto}</div>
+  ${sec("En cabina de anticorrosivo", g("ac"), "Ninguna cabina está trabajando")}
+  ${sec("En alistamiento", g("al"), "Nadie está alistando en este momento")}
+  ${sec("En espera", g("esp").sort((a,b) => (b.Prioridad==="ALTA")-(a.Prioridad==="ALTA")), "No hay vehículos en espera")}
+  ${sec("Proceso completo (últimos 7 días)", ok, "Sin vehículos completados en los últimos 7 días")}`;
+}
+
+/* ---------- Enviar a proceso (jefe, selección múltiple) ---------- */
+function vProceso() {
+  const lst = S.veh.filter(v => (S.verEntregados || activo(v)) && coincide(v))
+    .sort((a,b) => (estado(a).g==="none") - (estado(b).g==="none") || String(a.Title).localeCompare(String(b.Title)));
+  const n = S.sel.size;
+  return `<div class="card"><h2>Enviar vehículos a proceso</h2><p class="sub">Seleccione uno o varios vehículos y elija si van a cabina de anticorrosivo, a alistamiento o a ambos. El orden lo define quien los tome primero; un vehículo no puede estar en las dos etapas al mismo tiempo.</p>
+  <div class="row"><div class="grow">${buscar("Buscar por inventario, línea, color, cliente, pedido…", "$('#lp').innerHTML=vListaProceso()")}</div>
+  <label class="note" style="white-space:nowrap"><input type="checkbox" ${S.verEntregados?"checked":""} onchange="S.verEntregados=this.checked;render()"> Mostrar entregados</label>
+  <button class="btn o sm" onclick="selTodos()">Seleccionar visibles</button>${n ? `<button class="btn q sm" onclick="S.sel.clear();render()">Quitar selección</button>` : ""}</div></div>
+  ${upd()}<div class="list" id="lp">${vListaProceso()}</div>
+  <div class="sticky"><div class="bar"><div class="grow"><b>${n}</b> seleccionado(s)</div>
+    <label><input type="checkbox" ${S.envAC?"checked":""} onchange="S.envAC=this.checked;render()"> Anticorrosivo</label>
+    <label><input type="checkbox" ${S.envAL?"checked":""} onchange="S.envAL=this.checked;render()"> Alistamiento</label>
+    <label>Fecha <input type="date" value="${S.fecha||hoy()}" onchange="S.fecha=this.value"></label>
+    <button class="btn w sm" ${n&&!S.busy?"":"disabled"} onclick="quitarPend()">Quitar de espera</button>
+    <button class="btn p" ${n&&(S.envAC||S.envAL)&&!S.busy?"":"disabled"} onclick="enviar()">ENVIAR A PROCESO (${n})</button></div></div>`;
+}
+function vListaProceso() {
+  const lst = S.veh.filter(v => (S.verEntregados || activo(v)) && coincide(v))
+    .sort((a,b) => (estado(a).g==="none") - (estado(b).g==="none") || String(a.Title).localeCompare(String(b.Title)));
+  return lst.length ? lst.map(v => { const s = S.sel.has(v.id);
+    return tarjeta(v, `<div class="chk">${s?"✓":""}</div>`, `click ${s?"sel":""}`, `onclick="tog('${v.id}')"`); }).join("")
+    : `<div class="empty">No hay vehículos${S.busca ? " que coincidan" : ""}</div>`;
+}
+function tog(id) { S.sel.has(id) ? S.sel.delete(id) : S.sel.add(id); render(); }
+function selTodos() { S.veh.filter(v => (S.verEntregados || activo(v)) && coincide(v)).forEach(v => S.sel.add(v.id)); render(); }
+async function enviar() {
+  const fecha = S.fecha || hoy(); S.busy = true; render();
+  if (!DEMO) await cargar(true);
+  let n = 0, omit = 0;
+  for (const v of S.veh.filter(x => S.sel.has(x.id))) {
+    const f = {}, etapas = [];
+    for (const k of ["AC","AL"]) { if (!(k==="AC" ? S.envAC : S.envAL)) continue; const E = ETAPA[k];
+      if (st(v,k)) { omit++; continue; }                      // ya pendiente, en proceso o completado
+      f[E.est] = "Pendiente"; f[E.prog] = dIso(fecha); etapas.push(k); }
+    if (!etapas.length) continue;
+    if (String(v.Estado||"").toUpperCase() === "PROGRAMADO" || !v.Estado) f.Estado = "EN ALISTAMIENTO";
+    try { await actualizar(CONFIG.LIST_VEH, v.id, f); Object.assign(v, f); n++;
+      for (const k of etapas) await evento(v, ETAPA[k].n, "Enviado a proceso", S.user, null, "Fecha programada " + fecha); }
+    catch(e) { toast("Error con Inv. " + v.Title + ": " + e.message, "warn"); }
+  }
+  S.sel.clear(); S.busy = false; await cargar(true);
+  toast(`${n} vehículo(s) enviados a proceso` + (omit ? `. ${omit} etapa(s) omitidas porque ya estaban en espera, en proceso o terminadas` : ""), "ok");
+}
+async function quitarPend() {
+  if (!confirm("¿Quitar de la espera las etapas pendientes de los vehículos seleccionados? Lo que ya está en proceso o terminado no se modifica.")) return;
+  S.busy = true; render(); let n = 0;
+  for (const v of S.veh.filter(x => S.sel.has(x.id))) { const f = {};
+    for (const k of ["AC","AL"]) if (st(v,k)==="Pendiente") { f[ETAPA[k].est] = ""; f[ETAPA[k].prog] = null; }
+    if (!Object.keys(f).length) continue;
+    try { await actualizar(CONFIG.LIST_VEH, v.id, f); n++; await evento(v, "Programación", "Quitado de espera", S.user); } catch(e) { toast(e.message, "warn"); } }
+  S.sel.clear(); S.busy = false; await cargar(true); toast(`${n} vehículo(s) quitados de la espera`, "ok");
+}
+
+/* ---------- Mi puesto (cabinas y alistador) ---------- */
+function vPuesto() {
+  const P = CONFIG.PUESTOS.find(p => p.id === S.puesto);
+  if (!P) return `<div class="card" style="text-align:center"><h2 style="font-size:20px">¿Cuál es su puesto de trabajo?</h2><p class="sub">Toque su puesto para ver los vehículos asignados</p>
+    <div class="puestos">${CONFIG.PUESTOS.map(p => { const k = p.tipo, n = S.veh.filter(v => st(v,k)==="Pendiente").length;
+      return `<button class="pst" style="background:${p.color}" onclick="setPuesto('${p.id}')">${esc(p.id.toUpperCase())}<small>${k==="AC"?"Cabina de anticorrosivo":"Técnico alistador"} · ${n} en espera</small></button>`; }).join("")}</div></div>`;
+  const k = P.tipo, E = ETAPA[k], otra = k === "AC" ? "AL" : "AC";
+  const mio = S.veh.filter(v => st(v,k)==="En proceso" && v[E.resp]===P.id);
+  const pend = S.veh.filter(v => st(v,k)==="Pendiente" && coincide(v))
+    .sort((a,b) => (st(a,otra)==="En proceso") - (st(b,otra)==="En proceso") || (b.Prioridad==="ALTA")-(a.Prioridad==="ALTA") || new Date(a[E.prog]||0)-new Date(b[E.prog]||0));
+  const ocupado = mio.length > 0;
+  return `<div class="card"><div class="row"><div class="grow"><h2 style="font-size:20px">${esc(P.id.toUpperCase())}</h2>
+    <p class="sub" style="margin:0">${k==="AC" ? "Cabina de anticorrosivo" : "Técnico alistador"} · Toque INICIAR cuando empiece el trabajo y FINALIZAR al terminar</p></div>
+    <button class="btn q sm" onclick="setPuesto('')">Cambiar puesto</button></div></div>${upd()}
+  <div class="sec">Trabajando ahora <span class="n">${mio.length}</span></div>
+  <div class="list">${mio.length ? mio.map(v => tarjeta(v, `<div class="acts"><b class="note">Lleva ${dur(mins(v[E.ini], new Date()))}</b><button class="btn g" onclick="accion('${v.id}','${k}','fin')">FINALIZAR</button></div>`)).join("") : `<div class="empty">No tiene ningún vehículo en proceso</div>`}</div>
+  <div class="sec">En espera de ${E.n.toLowerCase()} <span class="n">${pend.length}</span></div>
+  <div style="margin-bottom:8px">${buscar("Buscar inventario…", "render();const i=document.querySelector('input[type=search]');i.focus();i.setSelectionRange(i.value.length,i.value.length)")}</div>
+  <div class="list">${pend.length ? pend.map(v => { const bloq = st(v,otra)==="En proceso";
+    return tarjeta(v, `<div class="acts">${bloq ? `<span class="chip c-gray">EN ${ETAPA[otra].n.toUpperCase()}</span>` : ""}<button class="btn ${k==="AC"?"p":"t"}" ${bloq||ocupado?"disabled":""} onclick="accion('${v.id}','${k}','ini')">INICIAR</button></div>`); }).join("")
+    : `<div class="empty">No hay vehículos en espera</div>`}</div>
+  ${ocupado ? `<p class="note" style="text-align:center">Finalice el vehículo en proceso para poder iniciar otro.</p>` : ""}`;
+}
+function setPuesto(p) { S.puesto = p; p ? localStorage.setItem("puesto", p) : localStorage.removeItem("puesto"); S.busca = ""; render(); }
+async function accion(id, k, tipo) {
+  const E = ETAPA[k], otra = k === "AC" ? "AL" : "AC";
+  try {
+    const v = await leerUno(id);                                // estado real antes de escribir
+    if (tipo === "ini") {
+      if (st(v,k) !== "Pendiente") { await cargar(true); return toast("Este vehículo ya fue tomado por otro puesto", "warn"); }
+      if (st(v,otra) === "En proceso") { await cargar(true); return toast("El vehículo está en " + ETAPA[otra].n.toLowerCase() + " en este momento", "warn"); }
+      const f = {[E.est]:"En proceso", [E.resp]:S.puesto, [E.ini]:new Date().toISOString()};
+      await actualizar(CONFIG.LIST_VEH, id, f); await evento({...v, ...f}, E.n, "Inicio", S.puesto);
+      toast(`Inv. ${v.Title} · ${E.n} iniciado`, "ok");
+    } else {
+      if (!confirm(`¿Confirma que terminó ${E.n.toLowerCase()} del vehículo Inv. ${v.Title}?`)) return;
+      const fin = new Date().toISOString(), f = {[E.est]:"Completado", [E.fin]:fin};
+      await actualizar(CONFIG.LIST_VEH, id, f); await evento({...v, ...f}, E.n, "Fin", S.puesto, mins(v[E.ini], fin));
+      const sigue = st(v,otra) === "Pendiente" ? ` · pasa a espera de ${ETAPA[otra].n.toLowerCase()}` : "";
+      toast(`Inv. ${v.Title} · ${E.n} terminado en ${dur(mins(v[E.ini], fin))}${sigue}`, "ok");
+    }
+  } catch(e) { toast("No se pudo actualizar: " + e.message, "warn"); }
+  await cargar(true);
+}
+
+/* ---------- Vehículos (administrativa) ---------- */
+function vVehiculos() {
+  const e = S.edit ? S.veh.find(v => v.id === S.edit) || {} : {};
+  const campo = c => `<div class="${c.area?"full":""}"><label class="f">${c.l}${c.req?" *":""}</label>${
+    c.area ? `<textarea name="${c.k}" rows="2" ${c.max?`maxlength="${c.max}"`:""}>${esc(e[c.k])}</textarea>` :
+    c.opts ? `<select name="${c.k}"><option value=""></option>${c.opts.map(o => `<option ${String(e[c.k]||"").toUpperCase()===o.toUpperCase()?"selected":""}>${o}</option>`).join("")}</select>` :
+    `<input type="${c.date?"date":"text"}" name="${c.k}" value="${esc(c.date ? toInput(e[c.k]) : e[c.k])}" ${c.req?"required":""}>`}</div>`;
+  return `<div class="card"><h2>${S.edit ? "Editar vehículo Inv. " + esc(e.Title) : "Registrar vehículo"}</h2>
+  <p class="sub">Mismos campos del cuadro de control. Los marcados con * son obligatorios.</p>
+  <form id="fveh" onsubmit="guardarVeh(event)"><div class="grid">${CAMPOS.map(campo).join("")}</div>
+  <div class="row" style="margin-top:14px"><button class="btn p" ${S.busy?"disabled":""}>${S.edit ? "Guardar cambios" : "Registrar vehículo"}</button>
+  ${S.edit ? `<button type="button" class="btn q" onclick="S.edit=null;render()">Cancelar</button>` : ""}</div></form></div>
+  <div class="card"><div class="row"><div class="grow"><h2>Vehículos registrados (${S.veh.length})</h2></div>
+  <div style="min-width:240px">${buscar("Buscar…", "$('#lv').innerHTML=vListaVeh()")}</div></div>
+  <div class="list" id="lv" style="margin-top:10px">${vListaVeh()}</div></div>`;
+}
+function vListaVeh() {
+  const l = S.veh.filter(coincide).sort((a,b) => activo(b) - activo(a)).slice(0, 150);
+  return l.map(v => tarjeta(v, `<button class="btn q sm" onclick="S.edit='${v.id}';render();scrollTo(0,0)">Editar</button>`)).join("") || `<div class="empty">Sin vehículos</div>`;
+}
+async function guardarVeh(ev) {
+  ev.preventDefault(); const fd = new FormData($("#fveh")), f = {};
+  for (const c of CAMPOS) { const v = (fd.get(c.k) || "").trim(); f[c.k] = c.date ? (v ? dIso(v) : null) : v; }
+  if (!S.edit && S.veh.some(v => String(v.Title).trim() === f.Title)) return toast("Ya existe un vehículo con ese inventario", "warn");
+  S.busy = true; render();
+  try { if (S.edit) { await actualizar(CONFIG.LIST_VEH, S.edit, f); await evento({...f, id:S.edit}, "Registro", "Edición de datos", S.user); }
+        else { const r = await crear(CONFIG.LIST_VEH, f); await evento(r, "Registro", "Vehículo registrado", S.user); }
+        toast(S.edit ? "Cambios guardados" : "Vehículo registrado", "ok"); S.edit = null; }
+  catch(e) { toast("No se pudo guardar: " + e.message, "warn"); }
+  S.busy = false; await cargar(true);
+}
+
+/* ---------- Trazabilidad y exportación ---------- */
+function vTraza() {
+  const ev = S.traza.filter(t => { const q = S.busca.toLowerCase(); return !q || [t.Title,t.Etapa,t.Accion,t.Responsable,t.Linea].join(" ").toLowerCase().includes(q); })
+    .sort((a,b) => new Date(b.FechaHora) - new Date(a.FechaHora));
+  return `<div class="card"><h2>Trazabilidad del proceso</h2><p class="sub">Cada acción queda registrada en la lista de SharePoint <b>${CONFIG.LIST_TRAZA}</b> con fecha, hora, responsable y duración.</p>
+  <div class="row"><div class="grow">${buscar("Filtrar por inventario, etapa, responsable…", "$('#tt').innerHTML=filasTraza()")}</div>
+  <button class="btn o sm" onclick="exportTraza()">Exportar eventos a Excel</button><button class="btn p sm" onclick="exportTiempos()">Exportar tiempos por vehículo</button></div></div>
+  ${S.trazaOk ? `<div class="tbl"><table><thead><tr><th>Fecha y hora</th><th>Inventario</th><th>Línea</th><th>Etapa</th><th>Acción</th><th>Responsable</th><th>Duración</th><th>Usuario</th></tr></thead><tbody id="tt">${filasTraza()}</tbody></table></div>`
+    : `<div class="empty">Cargando…</div>`}`;
+}
+function filasTraza() {
+  const q = S.busca.toLowerCase();
+  const ev = S.traza.filter(t => !q || [t.Title,t.Etapa,t.Accion,t.Responsable,t.Linea].join(" ").toLowerCase().includes(q)).sort((a,b) => new Date(b.FechaHora) - new Date(a.FechaHora));
+  return ev.map(t => `<tr><td>${fH(t.FechaHora)}</td><td><b>${esc(t.Title)}</b></td><td>${esc(t.Linea)}</td><td>${esc(t.Etapa)}</td><td>${esc(t.Accion)}</td><td>${esc(t.Responsable)}</td><td>${dur(t.DuracionMin ?? null)}</td><td>${esc(t.Usuario)}</td></tr>`).join("")
+    || `<tr><td colspan="8" class="empty">Sin eventos registrados</td></tr>`;
+}
+function csv(nombre, cab, filas) {
+  const c = x => { const s = String(x ?? ""); return /[;"\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; };
+  const txt = "﻿" + [cab, ...filas].map(r => r.map(c).join(";")).join("\r\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], {type:"text/csv;charset=utf-8"}));
+  a.download = `${nombre}_${hoy()}.csv`; a.click();
+}
+function exportTraza() {
+  csv("Trazabilidad", ["Fecha","Hora","Inventario","Línea","Color","Etapa","Acción","Responsable","Duración (min)","Usuario","Detalle"],
+    S.traza.sort((a,b) => new Date(a.FechaHora)-new Date(b.FechaHora)).map(t => [toInput(t.FechaHora), new Date(t.FechaHora).toLocaleTimeString("es-CO",{...TZ,hour:"2-digit",minute:"2-digit"}), t.Title, t.Linea, t.Color, t.Etapa, t.Accion, t.Responsable, t.DuracionMin ?? "", t.Usuario, t.Detalle]));
+}
+function exportTiempos() {
+  csv("Tiempos_por_vehiculo", ["Inventario","Línea","Color","Cliente","Estado","Estado del proceso","Anticorrosivo estado","Cabina","AC inicio","AC fin","AC duración (min)","Alistamiento estado","Técnico","AL inicio","AL fin","AL duración (min)"],
+    S.veh.filter(v => st(v,"AC") || st(v,"AL")).map(v => [v.Title, v.Linea, v.Color, v.Cliente, v.Estado, estado(v).t, st(v,"AC"), v.AC_Cabina, fH(v.AC_Inicio), fH(v.AC_Fin), mins(v.AC_Inicio,v.AC_Fin) ?? "",
+      st(v,"AL"), v.AL_Tecnico, fH(v.AL_Inicio), fH(v.AL_Fin), mins(v.AL_Inicio,v.AL_Fin) ?? ""]));
+}
+
+/* ===================== inicio ===================== */
+async function inicio() {
+  if (DEMO) { demoDatos(); S.user = "Usuario demostración"; S.email = CONFIG.JEFES[2]; S.esJefe = true; S.verTraza = true; S.upd = new Date(); render(); return; }
+  msalApp = new msal.PublicClientApplication({auth:{clientId:CONFIG.CLIENT_ID, authority:"https://login.microsoftonline.com/" + CONFIG.TENANT_ID, redirectUri:location.origin + location.pathname}, cache:{cacheLocation:"localStorage"}});
+  await msalApp.handleRedirectPromise();
+  const acc = msalApp.getAllAccounts()[0];
+  if (!acc) { $("#app").innerHTML = `<div class="card login"><h2>Bienvenido</h2><p class="sub">Ingrese con su cuenta corporativa de Microsoft (dinissan.com.co)</p><button class="btn p" onclick="msalApp.loginRedirect({scopes:SCOPES})">Iniciar sesión con Microsoft</button></div>`; return; }
+  S.user = acc.name; S.email = (acc.username || "").toLowerCase(); S.esJefe = CONFIG.JEFES.includes(S.email); S.verTraza = CONFIG.TRAZA.includes(S.email);
+  if (!S.esJefe) S.tab = "puesto";
+  try { siteId = (await graph(`/sites/${CONFIG.SITE_HOST}:${CONFIG.SITE_PATH}?$select=id`)).id; }
+  catch(e) { $("#app").innerHTML = `<div class="card">No se pudo abrir el sitio de SharePoint: ${esc(e.message)}</div>`; return; }
+  await cargar();
+  setInterval(() => { const a = document.activeElement;
+    if (!document.hidden && !S.busy && S.tab !== "vehiculos" && !(a && /INPUT|TEXTAREA|SELECT/.test(a.tagName))) cargar(true); }, CONFIG.REFRESCO_SEG * 1000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) cargar(true); });
+}
+inicio();
+</script>
+</body>
+</html>
